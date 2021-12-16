@@ -7,6 +7,7 @@ import com.backend.Instagram.model.request.SignupRequestBody
 import com.backend.Instagram.model.response.GenericResponse
 import com.backend.Instagram.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.batch.BatchDataSource
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.util.*
@@ -148,6 +149,26 @@ class UserService {
             throw BadRequestException("User does not exists")
         }
         return GenericResponse("")
+    }
+
+    fun getAllPost(userId: String): GenericResponse {
+        try {
+            UUID.fromString(userId)
+        } catch (ex: Exception) {
+            throw BadRequestException("Please provide valid user id")
+        }
+        val foundUserById = userRepository.findById(userId)
+        if (!foundUserById.isPresent) {
+            throw BadRequestException(msg = "User does not exists")
+        }
+        return try {
+            GenericResponse(
+                "Ok",
+                body = foundUserById.get()
+            )
+        } catch (e: Exception) {
+            throw BadRequestException(msg = e.message.toString())
+        }
     }
 
 }

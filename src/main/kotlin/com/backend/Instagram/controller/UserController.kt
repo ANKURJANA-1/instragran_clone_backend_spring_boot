@@ -74,7 +74,7 @@ class UserController {
         }
     }
 
-    @PostMapping("forgotPassword")
+    @PostMapping("changePassword")
     fun changePassword(
         @RequestParam
         id: String,
