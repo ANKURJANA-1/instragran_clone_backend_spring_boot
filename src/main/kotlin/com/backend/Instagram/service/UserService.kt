@@ -164,7 +164,7 @@ class UserService {
         return try {
             GenericResponse(
                 "Ok",
-                body = foundUserById.get()
+                body = foundUserById.get().post
             )
         } catch (e: Exception) {
             throw BadRequestException(msg = e.message.toString())

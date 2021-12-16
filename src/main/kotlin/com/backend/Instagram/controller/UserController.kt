@@ -18,7 +18,7 @@ class UserController {
     @Autowired
     private lateinit var userService: UserService
 
-    @GetMapping("login")
+    @PostMapping("login")
     fun login(
         @Valid
         @RequestBody
@@ -89,6 +89,18 @@ class UserController {
                 oldPassword,
                 newPassword
             )
+        } catch (e: Exception) {
+            throw BadRequestException(e.message.toString())
+        }
+    }
+
+    @GetMapping("allPost")
+    fun allPost(
+        @RequestParam
+        userId: String
+    ): GenericResponse {
+        return try {
+            userService.getAllPost(userId)
         } catch (e: Exception) {
             throw BadRequestException(e.message.toString())
         }

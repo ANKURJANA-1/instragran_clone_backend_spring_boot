@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.util.*
-import kotlin.system.measureNanoTime
 
 @Service
 class PostService {
@@ -35,10 +34,10 @@ class PostService {
         val post = Post(
             appUser = findUserById.get(),
         )
-        if (postRequestBody.postText.isNullOrEmpty()) {
+        if (!postRequestBody.postText.isNullOrEmpty()) {
             post.postText = postRequestBody.postText.toString()
         }
-        if (postRequestBody.postImagesUrl.isNullOrEmpty()) {
+        if (!postRequestBody.postImagesUrl.isNullOrEmpty()) {
             post.postImagesUrl = postRequestBody.postImagesUrl.toString()
         }
 
@@ -63,9 +62,14 @@ class PostService {
         if (!foundPostByPostId.isPresent) {
             throw BadRequestException(msg = "Post not present")
         }
+        val post = foundPostByPostId.get()
+        if (post.alreadyLiked) {
+            throw BadRequestException(msg = "Post already liked")
+        }
         return try {
-            val post = foundPostByPostId.get()
             post.postLike += 1
+            post.alreadyLiked = true
+            postRepository.save(post)
             GenericResponse(
                 message = "Ok",
                 body = post

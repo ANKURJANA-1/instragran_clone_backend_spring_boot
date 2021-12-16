@@ -1,21 +1,20 @@
 package com.backend.Instagram.model.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.util.*
 import javax.persistence.*
 
-@Entity
-@Table(name = "posts")
+@Entity(name = "posts")
 data class Post(
     @Id
     val postId: String = UUID.randomUUID().toString(),
+    @JsonIgnore
     @ManyToOne
     var appUser: AppUser = AppUser(),
-    @Column(name = "post_image")
     var postImagesUrl: String = "",
-    @Column(name = "post_text")
     var postText: String = "",
-    @Column(name = "post_like")
     var postLike: Long = 0L,
+    var alreadyLiked: Boolean = false
 //    @Column(name = "post_comments")
 //    var postComment: String = ""
 )
