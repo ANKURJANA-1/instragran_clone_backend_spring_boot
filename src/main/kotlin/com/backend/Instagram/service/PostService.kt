@@ -33,6 +33,7 @@ class PostService {
         }
         val post = Post(
             appUser = findUserById.get(),
+            userId = findUserById.get().id
         )
         if (!postRequestBody.postText.isNullOrEmpty()) {
             post.postText = postRequestBody.postText.toString()
@@ -58,11 +59,14 @@ class PostService {
         } catch (ex: Exception) {
             throw BadRequestException("Please provide valid user id")
         }
-        val foundPostByPostId = postRepository.findById(postId)
-        if (!foundPostByPostId.isPresent) {
+        val foundPostByPostId = postRepository.findByIdAndPostActive(postId)
+        if (foundPostByPostId.isEmpty()) {
             throw BadRequestException(msg = "Post not present")
         }
-        val post = foundPostByPostId.get()
+        val post = foundPostByPostId[0]
+        if (!post.postActive) {
+            throw BadRequestException(msg = "Post not present")
+        }
         if (post.alreadyLiked) {
             throw BadRequestException(msg = "Post already liked")
         }
@@ -85,12 +89,12 @@ class PostService {
         } catch (ex: Exception) {
             throw BadRequestException("Please provide valid user id")
         }
-        val foundPostByPostId = postRepository.findById(postRequestBody.userId)
-        if (!foundPostByPostId.isPresent) {
+        val foundPostByPostId = postRepository.findByIdAndPostActive(postRequestBody.userId)
+        if (foundPostByPostId.isEmpty()) {
             throw BadRequestException(msg = "Post not present")
         }
         return try {
-            val post = foundPostByPostId.get()
+            val post = foundPostByPostId[0]
             if (postRequestBody.postText.isNullOrEmpty()) {
                 post.postText = postRequestBody.postText.toString()
             }
@@ -112,13 +116,15 @@ class PostService {
         } catch (ex: Exception) {
             throw BadRequestException("Please provide valid user id")
         }
-        val foundPostByPostId = postRepository.findById(postId)
-        if (!foundPostByPostId.isPresent) {
+        val foundPostByPostId = postRepository.findByIdAndPostActive(postId)
+        if (foundPostByPostId.isEmpty()) {
             throw BadRequestException(msg = "Post not present")
         }
 
         return try {
-            postRepository.delete(foundPostByPostId.get())
+            val post = foundPostByPostId[0]
+            post.postActive = false
+            postRepository.save(post)
             GenericResponse(message = "Post delete successfully")
         } catch (e: Exception) {
             throw BadRequestException(msg = e.message.toString())

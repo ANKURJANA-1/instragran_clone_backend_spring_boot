@@ -3,6 +3,7 @@ package com.backend.Instagram.model.entity
 import com.fasterxml.jackson.annotation.JsonIgnore
 import java.util.*
 import javax.persistence.*
+import kotlin.collections.ArrayList
 
 @Entity(name = "posts")
 data class Post(
@@ -13,8 +14,10 @@ data class Post(
     var appUser: AppUser = AppUser(),
     var postImagesUrl: String = "",
     var postText: String = "",
+    var userId: String = "",
     var postLike: Long = 0L,
-    var alreadyLiked: Boolean = false
-//    @Column(name = "post_comments")
-//    var postComment: String = ""
+    var alreadyLiked: Boolean = false,
+    var postActive: Boolean = true,
+    @OneToMany(mappedBy = "post")
+    var postComment: List<Comment> = ArrayList()
 )
