@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 import java.util.*
+import java.util.stream.StreamSupport
 import javax.persistence.*
 import kotlin.collections.ArrayList
 
@@ -35,9 +36,12 @@ data class AppUser(
     @Column(name = "user_country_code", nullable = false)
     var countryCode: String = "",
     var profileComplete: Boolean = false,
+
     @OneToMany(mappedBy = "appUser")
     var post: List<Post> = ArrayList(),
 
+    @OneToMany(mappedBy = "appUser")
+    var status: List<Status> = ArrayList(),
     @CreationTimestamp
     var createdAt: LocalDateTime = LocalDateTime.now(),
     @UpdateTimestamp
