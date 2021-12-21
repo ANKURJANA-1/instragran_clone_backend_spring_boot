@@ -36,10 +36,8 @@ data class AppUser(
     @Column(name = "user_country_code", nullable = false)
     var countryCode: String = "",
     var profileComplete: Boolean = false,
-
     @OneToMany(mappedBy = "appUser")
     var post: List<Post> = ArrayList(),
-
     @OneToMany(mappedBy = "appUser")
     var status: List<Status> = ArrayList(),
     @CreationTimestamp

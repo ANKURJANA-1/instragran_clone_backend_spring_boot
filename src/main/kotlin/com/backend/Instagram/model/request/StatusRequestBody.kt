@@ -1,8 +1,5 @@
 package com.backend.Instagram.model.request
 
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
-
 
 data class StatusRequestBody(
     var userId: String? = null,

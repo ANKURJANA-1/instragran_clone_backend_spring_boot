@@ -135,4 +135,8 @@ class StatusService {
             throw BadRequestException(msg = e.message.toString())
         }
     }
+
+    fun commentStatus() {
+
+    }
 }
