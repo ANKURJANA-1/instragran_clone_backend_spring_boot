@@ -2,9 +2,12 @@ package com.backend.Instagram.service
 
 import com.backend.Instagram.exceptation.BadRequestException
 import com.backend.Instagram.model.entity.AppUser
+import com.backend.Instagram.model.entity.FriendRequest
 import com.backend.Instagram.model.request.LoginRequestBody
 import com.backend.Instagram.model.request.SignupRequestBody
 import com.backend.Instagram.model.response.GenericResponse
+import com.backend.Instagram.repository.FriendRequestBody
+import com.backend.Instagram.repository.FriendRequestRepository
 import com.backend.Instagram.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.batch.BatchDataSource
@@ -18,6 +21,10 @@ class UserService {
 
     @Autowired
     private lateinit var userRepository: UserRepository
+
+    @Autowired
+    private lateinit var friendRequestRepository: FriendRequestRepository
+
 
     fun signUp(signupRequestBody: SignupRequestBody): GenericResponse {
         val foundUser = userRepository.findByUserEmail(signupRequestBody.emailId)
@@ -165,6 +172,36 @@ class UserService {
             GenericResponse(
                 "Ok",
                 body = foundUserById.get().post
+            )
+        } catch (e: Exception) {
+            throw BadRequestException(msg = e.message.toString())
+        }
+    }
+
+    fun sendFriendRequest(friendRequestBody: FriendRequestBody): GenericResponse {
+        try {
+            UUID.fromString(friendRequestBody.friendUserId)
+        } catch (e: Exception) {
+            throw BadRequestException(msg = e.message.toString())
+        }
+        val foundUser = userRepository.findById(friendRequestBody.friendUserId)
+        if (!foundUser.isPresent) {
+            throw BadRequestException(msg = "user does not exists")
+        }
+        val user = foundUser.get()
+
+        if (user.alreadyRequest) {
+            throw BadRequestException(msg = "friend request already sent")
+        }
+        val friendRequest = FriendRequest(
+            friendRequestId = friendRequestBody.friendUserId,
+            appUser = user
+        )
+        return try {
+            friendRequestRepository.save(friendRequest)
+            GenericResponse(
+                message = "request sent",
+                body = friendRequest
             )
         } catch (e: Exception) {
             throw BadRequestException(msg = e.message.toString())

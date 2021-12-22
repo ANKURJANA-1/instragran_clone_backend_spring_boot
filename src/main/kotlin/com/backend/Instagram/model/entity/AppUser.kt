@@ -5,7 +5,6 @@ import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 import java.util.*
-import java.util.stream.StreamSupport
 import javax.persistence.*
 import kotlin.collections.ArrayList
 
@@ -33,13 +32,22 @@ data class AppUser(
     var country: String = "",
     var profilePicUrl: String = "",
     var active: Boolean = true,
+    var allowForMessage: Boolean = true,
+    var alreadyRequest: Boolean = false,
     @Column(name = "user_country_code", nullable = false)
     var countryCode: String = "",
     var profileComplete: Boolean = false,
+    var block: Boolean = false,
     @OneToMany(mappedBy = "appUser")
     var post: List<Post> = ArrayList(),
     @OneToMany(mappedBy = "appUser")
     var status: List<Status> = ArrayList(),
+    @JsonIgnore
+    @OneToMany(mappedBy = "appUser")
+    var message: List<Message> = ArrayList(),
+    @JsonIgnore
+    @OneToMany(mappedBy = "appUser")
+    var friendRequests: List<FriendRequest> = ArrayList(),
     @CreationTimestamp
     var createdAt: LocalDateTime = LocalDateTime.now(),
     @UpdateTimestamp

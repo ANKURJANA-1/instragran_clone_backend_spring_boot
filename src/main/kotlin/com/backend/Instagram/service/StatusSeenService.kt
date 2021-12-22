@@ -8,6 +8,7 @@ import com.backend.Instagram.repository.StatusRepository
 import com.backend.Instagram.repository.StatusSeenRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.web.bind.annotation.ExceptionHandler
 import java.util.*
 
 
@@ -20,6 +21,7 @@ class StatusSeenService {
     @Autowired
     private lateinit var statusSeenRepository: StatusSeenRepository
 
+    
     fun seen(seenStatusRequestBody: SeenStatusRequestBody): GenericResponse {
         try {
             UUID.fromString(seenStatusRequestBody.statusId)
